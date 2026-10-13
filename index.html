@@ -323,6 +323,12 @@ select.in option{background:#152336;color:#FFFFFF}
 .hi .what{color:#FFFFFF;font-size:15px}
 .hi .what small{display:block;color:var(--mut);font-size:13.5px;margin-top:2px}
 .tr{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:22px 14px;text-align:center;cursor:pointer;color:var(--mut)}
+.drop:hover{border-color:var(--cyan)}.drop b{color:#FFFFFF;display:block;margin-bottom:4px}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.imptab{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 4px}
+.imptab td,.imptab th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;color:#FFFFFF}
+.imptab th{color:var(--mut);font-weight:600}.imptab td.n{text-align:right;font-weight:600}
 .fsel{display:flex;gap:8px}.fsel .in{flex:1;min-width:0}.fsel .btn{padding:0 12px;flex:none}
 .ckrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .ckrow .lbl{display:flex;align-items:center;gap:10px;color:#FFFFFF;font-size:15px}
@@ -334,6 +340,9 @@ select.in option{background:#152336;color:#FFFFFF}
 .bm button{min-height:42px;min-width:72px;border-radius:10px;border:1px solid var(--line);background:#0F2036;color:var(--mut);font-weight:600;cursor:pointer}
 .bm button.onB{background:var(--ok);border-color:var(--ok);color:#0D1B2E}
 .bm button.onM{background:var(--bad);border-color:var(--bad);color:#FFFFFF}
+.step.ok.nr .dot{background:#FF8A3D;border-color:#FF8A3D;color:#0D1B2E}
+.step.ok.nr .shd2 .nm small{color:#FF8A3D}
+.step.ok.nr::before{background:var(--line)}
 .step.pen.nb .dot{animation:none;background:#0D1B2E;color:var(--warn)}
 .step.pen.nb .sbody{border-color:rgba(77,163,255,.45);border-style:dashed}
 .al.nb{border-left-color:var(--info)}.al.nb .n{color:var(--info)}
@@ -369,22 +378,23 @@ const ETAPAS = [
   {n:5,  nom:'Asignar Conductor, Tracto y Semirremolque',        resp:['SUP'],            frec:'S', tipo:'asignar'},
   {n:6,  nom:'Notificar a Conductor',                            resp:['SUP'],            frec:'S', tipo:'wa'},
   {n:7,  nom:'Gestionar Pases',                                  resp:['ADM'],            frec:'A', tipo:'simple'},
-  {n:8,  nom:'Gestionar Peajes',                                 resp:['ADM'],            frec:'A', tipo:'detalle', campo:'Detalle de peajes (TAG, montos, rutas)'},
-  {n:9,  nom:'Gestionar Permisos',                               resp:['ADM'],            frec:'A', tipo:'detalle', campo:'Detalle de permisos (N°, organismo, vigencia)'},
-  {n:10, nom:'Enviar Datos de Contacto de Carga a Conductor',    resp:['SUP','ADM','JT'], frec:'S', tipo:'wa', nb:true},
-  {n:11, nom:'Enviar Datos de Contacto de Descarga a Conductor', resp:['SUP','ADM','JT'], frec:'S', tipo:'wa', nb:true},
+  {n:8,  nom:'Gestionar Peajes',                                 resp:['ADM'],            frec:'A', tipo:'hecho'},
+  {n:9,  nom:'Gestionar Permisos',                               resp:['ADM'],            frec:'A', tipo:'hecho'},
+  {n:10, nom:'Enviar Datos de Contacto de Carga a Conductor',    resp:['SUP','ADM','JT'], frec:'S', tipo:'hecho', nb:true},
+  {n:11, nom:'Enviar Datos de Contacto de Descarga a Conductor', resp:['SUP','ADM','JT'], frec:'S', tipo:'hecho', nb:true},
   {n:12, nom:'Enviar Datos de Contacto de Conductor a Cliente',  resp:['SUP'],            frec:'S', tipo:'wa'},
-  {n:13, nom:'Envío Pases a Conductor',                          resp:['SUP','ADM','JT'], frec:'S', tipo:'wa'},
-  {n:14, nom:'Equipo Operativo',                                 resp:['SUP'],            frec:'S', tipo:'equipo'},
+  {n:13, nom:'Envío Pases a Conductor',                          resp:['SUP','ADM','JT'], frec:'S', tipo:'hecho'},
+  {n:14, nom:'Equipo Operativo',                                 resp:['SUP'],            frec:'S', tipo:'equipo', eliminada:true},
   {n:15, nom:'Checklist Equipo y F&S',                           resp:['SUP'],            frec:'S', tipo:'checklist'},
-  {n:16, nom:'Envío Km Inicio Servicio',                         resp:['SUP'],            frec:'S', tipo:'km'},
-  {n:17, nom:'Envío guía Carga o Descarga',                      resp:['SUP'],            frec:'S', tipo:'guia'},
-  {n:18, nom:'Envío Km carga o Descarga',                        resp:['SUP'],            frec:'S', tipo:'km'},
-  {n:19, nom:'Envío guía Carga o Descarga',                      resp:['SUP'],            frec:'S', tipo:'guia'},
-  {n:20, nom:'Envío Km Fin de servicio',                         resp:['SUP'],            frec:'S', tipo:'km'},
+  {n:16, nom:'Envío Km Inicio Servicio',                         resp:['SUP'],            frec:'S', tipo:'hecho'},
+  {n:17, nom:'Envío guía Carga o Descarga',                      resp:['SUP'],            frec:'S', tipo:'hecho'},
+  {n:18, nom:'Envío Km carga o Descarga',                        resp:['SUP'],            frec:'S', tipo:'hecho'},
+  {n:19, nom:'Envío guía Carga o Descarga',                      resp:['SUP'],            frec:'S', tipo:'hecho'},
+  {n:20, nom:'Envío Km Fin de servicio',                         resp:['SUP'],            frec:'S', tipo:'hecho'},
   {n:21, nom:'Cerrar Servicio',                                  resp:['SUP','JT'],       frec:'S', tipo:'fin'}
 ];
-/* nb:true → etapa diferible: puede completarse después y no bloquea las siguientes */
+/* nb:true → etapa diferible: puede completarse después y no bloquea las siguientes
+   eliminada:true → ya no se usa en servicios nuevos (se mantiene para el historial) */
 const CHECKLIST = ['Luces y señalización','Neumáticos y llantas','Frenos y sistema de aire','Documentación del equipo al día','Extintor y kit antiderrame','EPP del conductor','Control de Fatiga y Somnolencia (F&S) aprobado'];
 const EST = {NI:{t:'No iniciada',c:'gray'},PEN:{t:'Pendiente',c:'warn'},OK:{t:'Completada',c:'ok'},NA:{t:'No aplica',c:'gray'},CAN:{t:'Cancelada',c:'bad'}};
 const SEST = {OPORTUNIDAD:{t:'Esperando confirmación',c:'warn'},ABIERTO:{t:'Abierto',c:'info'},DECLINADO:{t:'Declinado',c:'bad'},CERRADO:{t:'Cerrado',c:'ok'}};
@@ -531,7 +541,7 @@ async function exportarExcel(){
           'Km inicio':k0??'','Km fin':k1??'','Km recorridos':(k0!=null&&k1!=null)?k1-k0:'','Creado':fTs(s.creado),'Creado por':nomU(s.creadoPor),
           'Motivo cancelación':s.cancel?s.cancel.motivo:'','Cerrado':s.cierre?fTs(s.cierre.fecha):''}; });
       const hEt=[]; S.forEach(s=>s.etapas.forEach(e=>{ if(!e.aplica) return;
-        hEt.push({'Servicio':s.id,'N°':e.n,'Etapa':def(e.n).nom,'Responsable':rolesTxt(def(e.n).resp),'Estado':EST[e.estado].t,
+        hEt.push({'Servicio':s.id,'N°':e.n,'Etapa':def(e.n).nom,'Responsable':rolesTxt(def(e.n).resp),'Estado':esNR(e)?'No realizada':EST[e.estado].t,
           'Completada':e.fecha?fTs(e.fecha):'','Usuario':e.usuario?nomU(e.usuario):'','Observaciones':e.obs||'','Detalle':resumenDatos(s,e.n,e.datos||{},'')}); }));
       const hH = hist.map(mapHist).map(h=>({'Servicio':h.servicio,'Fecha':fTs(h.fecha),'Usuario':nomU(h.usuario),'Acción':h.accion,'Estado anterior':h.antes,'Estado nuevo':h.despues,'Detalle':h.detalle}));
       const wb = XLSX.utils.book_new();
@@ -627,6 +637,7 @@ function normTel(t){ let d=cleanTel(t); if(d.length===9 && d[0]==='9') d='56'+d;
 function kmDe(s,n){ const v=(s.etapas[n-1].datos||{}).km; return v!=null&&v!==''?Number(v):null; }
 function resumenDatos(s,n,d,obs){
   const p=[];
+  if(d.resultado==='NR') p.push('No realizada');
   if(d.registro) p.push(`Folio ${d.registro}`);
   if(n===5 && d.conductor) p.push(`${byId('conductores',d.conductor).nombre} · ${byId('tractos',d.tracto).patente} · ${byId('semis',d.semi).patente}`);
   if((n===10||n===11) && d.nombre) p.push(`Contacto ${d.nombre} ${fTel(d.tel)}`);
@@ -680,6 +691,7 @@ const IC = {
   out:'<path d="M15 4h4v16h-4"/><path d="M10 8l-4 4 4 4M6 12h10"/>',
   reset:'<path d="M4 4v6h6"/><path d="M20 12a8 8 0 01-14.5 4.5M4 10a8 8 0 0114.5-2.5"/>',
   info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/>',
+  up:'<path d="M12 16V5M7 10l5-5 5 5"/><path d="M5 20h14"/>',
   down:'<path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 20h14"/>',
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   xs:'<path d="M6 6l12 12M18 6L6 18"/>',
@@ -1027,7 +1039,7 @@ function vClientes(){
   const u=me(), ed=puedeCrear(u);
   const cnt=id=>DB.servicios.filter(s=>s.cliente===id).length;
   return `<div class="phead" style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2>Clientes</h2><p>Datos de contacto usados al crear servicios y en los mensajes de WhatsApp.</p></div>
-      ${ed?`<button class="btn pri" onclick="clienteModal(null,false)">${ic('plus')}Nuevo cliente</button>`:''}</div>
+      <div class="btnrow" style="flex:0 1 auto">${u.rol==='JT'?`<button class="btn" onclick="importarModal()">${ic('up')}Cargar desde Excel</button>`:''}${ed?`<button class="btn pri" onclick="clienteModal(null,false)">${ic('plus')}Nuevo cliente</button>`:''}</div></div>
     <div class="list two">${DB.clientes.map(c=>`<div class="card" style="cursor:default">
       <div class="r1"><span class="cli" style="margin:0;flex:1">${esc(c.nombre)}</span>${ed?`<button class="btn sm" onclick="clienteModal('${c.id}',false)">${ic('edit')}Editar</button>`:''}</div>
       <div class="meta"><span>Contacto <b>${esc(c.contacto)}</b></span><span>Teléfono <b>${fTel(c.tel)}</b></span><span>Servicios <b>${cnt(c.id)}</b></span></div></div>`).join('')}</div>`;
@@ -1058,6 +1070,95 @@ async function guardarCliente(id, volver){
   if(volver){ NS.draft=NS.draft||{aplica:{}}; NS.draft.cliente=cid; nuevoServicio(NS.draft); } else { closeModal(); render(); }
 }
 
+/* ---------- CARGA DESDE EXCEL (solo Jefe de Transporte) ---------- */
+let IMP=null;
+const normH = s => String(s??'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const normN = s => String(s??'').trim().replace(/\s+/g,' ');
+function hojaDe(wb, ...nombres){ const k=wb.SheetNames.find(n=>nombres.includes(normH(n))); return k?XLSX.utils.sheet_to_json(wb.Sheets[k],{defval:'',raw:false}):null; }
+function col(row, ...claves){ for(const [k,v] of Object.entries(row)){ if(claves.includes(normH(k))) return normN(v); } return ''; }
+function descargarPlantilla(){
+  if(!window.XLSX){ toast('No se pudo cargar el módulo de Excel. Recarga la página.','bad'); return; }
+  const wb=XLSX.utils.book_new();
+  const cl=XLSX.utils.json_to_sheet([{'Cliente':'Ejemplo SpA','Nombre contacto':'Juan Pérez','Teléfono':'+56 9 1234 5678'}]);
+  cl['!cols']=[{wch:28},{wch:26},{wch:18}];
+  const o=XLSX.utils.json_to_sheet([{'Nombre':'Vallenar'}]); o['!cols']=[{wch:30}];
+  const d=XLSX.utils.json_to_sheet([{'Nombre':'Vallenar'}]); d['!cols']=[{wch:30}];
+  XLSX.utils.book_append_sheet(wb,cl,'Clientes'); XLSX.utils.book_append_sheet(wb,o,'Origenes'); XLSX.utils.book_append_sheet(wb,d,'Destinos');
+  XLSX.writeFile(wb,'Plantilla_Clientes_Origenes_Destinos.xlsx');
+}
+function importarModal(){
+  if(me().rol!=='JT') return;
+  IMP=null;
+  modal(`<div class="shd"><div><h2>Cargar desde Excel</h2><p class="mut" style="margin:0">Crea o actualiza clientes, orígenes y destinos. Si un nombre ya existe, se actualizan sus datos.</p></div></div>
+    <button class="btn block" style="margin-bottom:14px" onclick="descargarPlantilla()">${ic('down')}Descargar plantilla</button>
+    <label class="drop" for="impf"><input type="file" id="impf" accept=".xlsx,.xls" onchange="leerExcel(this.files[0])"><b>Seleccionar archivo Excel</b>Hojas: Clientes, Origenes, Destinos</label>
+    <div id="impres"></div>
+    <div class="acts"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn pri" id="impbtn" disabled onclick="ejecutarImport()">Cargar datos</button></div>`);
+}
+function leerExcel(file){
+  const res=$('#impres'); IMP=null; $('#impbtn').disabled=true;
+  if(!file) return;
+  if(!window.XLSX){ res.innerHTML='<div class="banner bad">No se pudo cargar el módulo de Excel. Recarga la página.</div>'; return; }
+  const fr=new FileReader();
+  fr.onload=()=>{
+    let wb; try{ wb=XLSX.read(fr.result,{type:'array'}); }catch(e){ res.innerHTML='<div class="banner bad">No se pudo leer el archivo. Verifica que sea un Excel (.xlsx).</div>'; return; }
+    IMP=analizarExcel(wb); res.innerHTML=resumenImport(IMP);
+    $('#impbtn').disabled = !(IMP.cli.nuevos.length+IMP.cli.act.length+IMP.ori.nuevos.length+IMP.des.nuevos.length);
+  };
+  fr.readAsArrayBuffer(file);
+}
+function analizarExcel(wb){
+  const out={cli:{nuevos:[],act:[],igual:0,err:[]}, ori:{nuevos:[],existe:0,err:[]}, des:{nuevos:[],existe:0,err:[]}, hojas:0};
+  const rc=hojaDe(wb,'clientes','cliente');
+  if(rc){ out.hojas++; const vistos=new Set();
+    rc.forEach((r,i)=>{ const fila=i+2;
+      const nombre=col(r,'cliente','nombrecliente','nombre'), contacto=col(r,'nombrecontacto','contacto'), tel=normTel(col(r,'telefono','telefonocontacto','fono','celular'));
+      if(!nombre && !contacto && !tel) return;
+      if(!nombre){ out.cli.err.push(`Fila ${fila}: falta el nombre del cliente`); return; }
+      if(!contacto){ out.cli.err.push(`Fila ${fila} (${nombre}): falta el nombre del contacto`); return; }
+      if(tel.length!==11){ out.cli.err.push(`Fila ${fila} (${nombre}): teléfono inválido`); return; }
+      const k=nombre.toLowerCase(); if(vistos.has(k)){ out.cli.err.push(`Fila ${fila} (${nombre}): nombre repetido en el archivo`); return; } vistos.add(k);
+      const ex=DB.clientes.find(c=>c.nombre.toLowerCase()===k);
+      if(!ex) out.cli.nuevos.push({nombre,contacto,telefono:tel});
+      else if(ex.contacto!==contacto || ex.tel!==tel || ex.nombre!==nombre) out.cli.act.push({id:ex.id,nombre,contacto,telefono:tel});
+      else out.cli.igual++;
+    }); }
+  [['ori','origenes',['origenes','origen']],['des','destinos',['destinos','destino']]].forEach(([k,lista,hn])=>{
+    const rows=hojaDe(wb,...hn); if(!rows) return; out.hojas++; const vistos=new Set();
+    rows.forEach(r=>{ const nombre=col(r,'nombre','origen','destino','lugar'); if(!nombre) return;
+      const kk=nombre.toLowerCase(); if(vistos.has(kk)) return; vistos.add(kk);
+      if(DB[lista].some(x=>x.nombre.toLowerCase()===kk)) out[k].existe++; else out[k].nuevos.push({nombre}); });
+  });
+  return out;
+}
+function resumenImport(r){
+  if(!r.hojas) return '<div class="banner bad" style="margin-top:12px">El archivo no tiene hojas llamadas Clientes, Origenes o Destinos. Usa la plantilla.</div>';
+  const err=[...r.cli.err];
+  return `<table class="imptab" style="margin-top:14px"><tr><th></th><th style="text-align:right">Nuevos</th><th style="text-align:right">Se actualizan</th><th style="text-align:right">Sin cambios</th></tr>
+    <tr><td>Clientes</td><td class="n">${r.cli.nuevos.length}</td><td class="n">${r.cli.act.length}</td><td class="n">${r.cli.igual}</td></tr>
+    <tr><td>Orígenes</td><td class="n">${r.ori.nuevos.length}</td><td class="n">—</td><td class="n">${r.ori.existe}</td></tr>
+    <tr><td>Destinos</td><td class="n">${r.des.nuevos.length}</td><td class="n">—</td><td class="n">${r.des.existe}</td></tr></table>
+    ${err.length?`<div class="banner warn">${err.length} fila(s) no se cargarán:<br>${err.slice(0,8).map(esc).join('<br>')}${err.length>8?`<br>…y ${err.length-8} más`:''}</div>`:''}`;
+}
+async function ejecutarImport(){
+  if(!IMP || me().rol!=='JT') return;
+  const r=IMP;
+  try{
+    await accion(async()=>{
+      const ins=async(t,rows)=>{ if(!rows.length) return; const {error}=await SB.from(t).insert(rows); if(error) throw error; };
+      await ins('clientes', r.cli.nuevos);
+      for(const c of r.cli.act){ const {error}=await SB.from('clientes').update({nombre:c.nombre,contacto:c.contacto,telefono:c.telefono}).eq('id',+c.id); if(error) throw error; }
+      await ins('origenes', r.ori.nuevos);
+      await ins('destinos', r.des.nuevos);
+    });
+  }catch(e){ $('#impres').insertAdjacentHTML('beforeend',`<div class="banner bad">${esc(errMsg(e))}</div>`); return; }
+  closeModal(); render();
+  const p=[]; if(r.cli.nuevos.length) p.push(`${r.cli.nuevos.length} cliente(s) nuevo(s)`); if(r.cli.act.length) p.push(`${r.cli.act.length} cliente(s) actualizado(s)`);
+  if(r.ori.nuevos.length) p.push(`${r.ori.nuevos.length} origen(es)`); if(r.des.nuevos.length) p.push(`${r.des.nuevos.length} destino(s)`);
+  toast(`Carga lista: ${p.join(', ')}.`);
+}
+
+
 /* ---------- DETALLE DEL SERVICIO ---------- */
 function vServicio(id){
   const s=getS(id);
@@ -1087,7 +1188,7 @@ function vServicio(id){
   const tabs=`<div class="tabs"><button class="${DTAB==='wf'?'on':''}" onclick="DTAB='wf';render()">Workflow</button><button class="${DTAB==='hist'?'on':''}" onclick="DTAB='hist';render()">Historial</button><button class="${DTAB==='env'?'on':''}" onclick="DTAB='env';render()">Información enviada</button></div>`;
   let body='';
   if(DTAB==='wf') body=`<ol class="steps">${s.etapas.filter(e=>e.aplica).map(e=>stepHTML(s,e)).join('')}</ol>
-    ${s.etapas.some(e=>!e.aplica)?`<p class="dim" style="font-size:14px;margin-top:8px">No aplican a este servicio: ${s.etapas.filter(e=>!e.aplica).map(e=>`${e.n}. ${def(e.n).nom}`).join(', ')}.</p>`:''}`;
+    ${s.etapas.some(e=>!e.aplica&&!def(e.n).eliminada)?`<p class="dim" style="font-size:14px;margin-top:8px">No aplican a este servicio: ${s.etapas.filter(e=>!e.aplica&&!def(e.n).eliminada).map(e=>`${e.n}. ${def(e.n).nom}`).join(', ')}.</p>`:''}`;
   if(DTAB==='hist') body=histHTML(s);
   if(DTAB==='env') body=enviadosHTML(s);
   return `<button class="back" onclick="location.hash='#/${back}'">${ic('back')}${NAV.find(n=>n.k===back).t}</button>
@@ -1103,7 +1204,7 @@ function histHTML(s){
   }
   return `<div class="hist">${h.map(x=>`<div class="hi"><div class="when">${fHora(x.fecha)}<br><span class="dim" style="font-size:13px">${fDia(x.fecha)}</span></div>
     <div class="what">${esc(x.accion)}<small>${esc(nomU(x.usuario))} (${ROLES[byId('usuarios',x.usuario).rol]||''})</small>
-    <span class="tr"><span class="chip gray plain">${esc(x.antes)}</span>${ic('arrow','width="14" height="14" style="color:#8BAFC8"')}<span class="chip ${x.despues==='Completada'||x.despues==='Cerrado'||x.despues==='Abierto'?'ok':x.despues==='Cancelada'||x.despues==='Declinado'?'bad':'warn'} plain">${esc(x.despues)}</span></span>
+    <span class="tr"><span class="chip gray plain">${esc(x.antes)}</span>${ic('arrow','width="14" height="14" style="color:#8BAFC8"')}<span class="chip ${x.despues==='Completada'||x.despues==='Cerrado'||x.despues==='Abierto'?'ok':x.despues==='Cancelada'||x.despues==='Declinado'||x.despues==='No realizada'?'bad':'warn'} plain">${esc(x.despues)}</span></span>
     ${x.detalle?`<small>${esc(x.detalle)}</small>`:''}</div></div>`).join('')}</div>`;
 }
 function enviadosHTML(s){
@@ -1114,15 +1215,17 @@ function enviadosHTML(s){
 }
 
 /* ---------- etapa (stepper) ---------- */
+const esNR = e => e && e.estado==='OK' && e.datos && e.datos.resultado==='NR';
 function stepHTML(s, e){
-  const d=def(e.n), u=me(), cls={OK:'ok',PEN:'pen',NI:'ni',CAN:'can',NA:'ni'}[e.estado]+(d.nb&&e.estado==='PEN'?' nb':'');
+  const nr=esNR(e);
+  const d=def(e.n), u=me(), cls={OK:'ok',PEN:'pen',NI:'ni',CAN:'can',NA:'ni'}[e.estado]+(d.nb&&e.estado==='PEN'?' nb':'')+(nr?' nr':'');
   const open = OPEN_STEP===e.n || (OPEN_STEP===null && e===pendiente(s));
   let sub='';
-  if(e.estado==='OK') sub=`${esc(nomU(e.usuario))} · ${fTs(e.fecha)}`;
+  if(e.estado==='OK') sub=`${nr?'No realizada · ':''}${esc(nomU(e.usuario))} · ${fTs(e.fecha)}`;
   else if(e.estado==='PEN') sub=`${d.nb?'Pendiente diferible':'Pendiente'} · ${rolesTxt(d.resp)} · hace ${edad(e.desde||s.creado)}`;
   else if(e.estado==='CAN') sub='Cancelada';
   else sub=`${rolesTxt(d.resp)}${s.estado==='OPORTUNIDAD'&&e.n>3?' · disponible al confirmar':''}`;
-  const dot = e.estado==='OK' ? ic('check','stroke-width="3"') : e.estado==='CAN' ? ic('x','stroke-width="2.5"') : e.n;
+  const dot = nr ? ic('xs','stroke-width="3"') : e.estado==='OK' ? ic('check','stroke-width="3"') : e.estado==='CAN' ? ic('x','stroke-width="2.5"') : e.n;
   return `<li class="step ${cls}" id="st${e.n}"><div class="dot">${dot}</div><div class="sbody">
     <button class="shd2" onclick="toggleStep(${e.n})" aria-expanded="${open}"><span class="nm">${esc(d.nom)}${e.n===17?' (1ª)':e.n===19?' (2ª)':''}<small>${sub}</small></span>${d.frec==='A'?'<span class="tag">A veces</span>':''}${d.nb?'<span class="tag" style="color:#4DA3FF">Diferible</span>':''}</button>
     ${open?`<div class="panel">${panelHTML(s,e)}</div>`:''}</div></li>`;
@@ -1145,7 +1248,8 @@ function panelHTML(s, e){
 }
 function detalleOK(s,e){
   const d=e.datos||{}, rows=[];
-  rows.push(['Completada por',`${nomU(e.usuario)} (${ROLES[byId('usuarios',e.usuario).rol]})`]); rows.push(['Fecha y hora',fTs(e.fecha)]);
+  rows.push([d.resultado==='NR'?'Registrada por':'Completada por',`${nomU(e.usuario)} (${ROLES[byId('usuarios',e.usuario).rol]})`]); rows.push(['Fecha y hora',fTs(e.fecha)]);
+  if(d.resultado==='NR') rows.push(['Resultado','No realizada']);
   if(d.decision) rows.push(['Decisión',d.decision]);
   if(d.registro) rows.push(['N° registro (Folio)',d.registro]);
   if(e.n===5){ const t=byId('tractos',d.tracto), sm=byId('semis',d.semi); rows.push(['Conductor',byId('conductores',d.conductor).nombre]); rows.push(['Tractocamión',`${t.patente} – ${t.marca}`]); rows.push(['Semirremolque',`${sm.patente} – ${sm.tipo}`]); }
@@ -1182,6 +1286,7 @@ function formHTML(s,e){
   switch(d.tipo){
     case 'cotizacion': return box(btnComp(sid,n,'Marcar cotización enviada'));
     case 'simple': return box(btnComp(sid,n));
+    case 'hecho': return box(`${obsHTML(n)}<div class="btnrow"><button class="btn bad" onclick="submitEtapa('${sid}',${n},true)">${ic('x')}No realizada</button><button class="btn ok" onclick="submitEtapa('${sid}',${n})">${ic('check')}Marcar como cumplida</button></div>`);
     case 'decision': return box(`<p class="mut" style="margin:0 0 12px">Registra la respuesta del cliente a la cotización. Confirmar o cancelar notifica a todos los usuarios.</p>
       <div class="fg"><label class="f" for="mot3">Motivo (obligatorio si se cancela)</label><textarea class="in" id="mot3" style="min-height:64px" placeholder="Ej: tarifa no aceptada"></textarea></div>
       <div class="btnrow"><button class="btn bad fill" onclick="decidirUI('${sid}',false)">${ic('x')}Cancelar servicio</button><button class="btn ok" onclick="decidirUI('${sid}',true)">${ic('check')}Confirmar servicio</button></div>`);
@@ -1211,7 +1316,7 @@ function formHTML(s,e){
     case 'guia': return box(`${inp(n,'guia','N° de guía de despacho','')}${obsHTML(n)}${btnComp(sid,n)}`);
     case 'fin': {
       const k0=kmDe(s,16), k1=kmDe(s,20), inc=s.etapas.filter(x=>x.aplica&&x.n<21&&x.estado!=='OK').length;
-      return box(`<dl class="dl" style="margin-bottom:12px"><dt>Km recorridos</dt><dd>${k0!=null&&k1!=null?(k1-k0).toLocaleString('es-CL')+' km':'—'}</dd><dt>Etapas completas</dt><dd>${progreso(s).ok} de ${progreso(s).total}</dd></dl>
+      return box(`<dl class="dl" style="margin-bottom:12px">${k0!=null&&k1!=null?`<dt>Km recorridos</dt><dd>${(k1-k0).toLocaleString('es-CL')} km</dd>`:''}<dt>Etapas completas</dt><dd>${progreso(s).ok} de ${progreso(s).total}</dd></dl>
         ${inc?`<div class="banner warn" style="margin:0 0 12px">Hay ${inc} etapa(s) sin completar. Al cerrar quedarán canceladas sin ejecutar.</div>`:''}
         ${obsHTML(n)}<button class="btn ok block" onclick="submitEtapa('${sid}',21)">${ic('done')}Cerrar servicio</button>`);
     }
@@ -1268,7 +1373,7 @@ async function cancelarUI(sid){
   catch(e){ $('#cerr').innerHTML=`<div class="err">${esc(errMsg(e))}</div>`; return; }
   closeModal(); render(); toast(`Servicio ${sid} cancelado. Se notificó a todos los usuarios.`,'bad');
 }
-function submitEtapa(sid, n){
+function submitEtapa(sid, n, noRealizada){
   const s=getS(sid), e=s.etapas[n-1], d=def(n), v=vals(n), obs=($('#obs'+n)?.value||'').trim(), u=me();
   if(!puede(u,s,e)){ toast('No tienes permiso para completar esta etapa.','bad'); return; }
   let datos={}, err='';
@@ -1291,6 +1396,7 @@ function submitEtapa(sid, n){
       else datos={...v};
       break;
   }
+  if(noRealizada) datos={resultado:'NR'};
   if(err){ toast(err,'bad'); return; }
   const key=sid+'_'+n, ta=$('#wa'+n);
   if(ta){ datos.mensaje=ta.value; if(WA_SENT[key]) datos.waEnviado=WA_SENT[key]; }
@@ -1306,9 +1412,9 @@ function submitEtapa(sid, n){
     const s2=getS(sid), nuevas=s2?pendientes(s2).filter(x=>!prevPen.has(x.n)):[];
     render();
     if(n===21) toast(`Servicio ${sid} cerrado. Se notificó a todos los usuarios.`);
-    else toast(`Etapa ${n} completada.${nuevas.length?` Se notificó a ${[...new Set(nuevas.flatMap(x=>def(x.n).resp))].map(r=>ROLES[r]).join(', ')}.`:''}`);
+    else toast(`Etapa ${n} ${noRealizada?'marcada como no realizada':'completada'}.${nuevas.length?` Se notificó a ${[...new Set(nuevas.flatMap(x=>def(x.n).resp))].map(r=>ROLES[r]).join(', ')}.`:''}`);
   };
-  if(warns.length) confirmar(n===21?'Cerrar servicio':'Completar etapa', warns.join('<br><br>'), n===21?'Cerrar servicio':'Completar igual', run, 'ok');
+  if(warns.length) confirmar(n===21?'Cerrar servicio':noRealizada?'Marcar como no realizada':'Completar etapa', warns.join('<br><br>'), n===21?'Cerrar servicio':'Completar igual', run, 'ok');
   else run();
 }
 
